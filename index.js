@@ -13,12 +13,15 @@ function hasDockerEnv() {
 }
 
 function hasDockerCGroup() {
-	try {
-		return fs.readFileSync('/proc/self/cgroup', 'utf8').indexOf('docker') !== -1;
-	} catch (err) {
+    var DOCKER_GROUPS = ['docker', '/ecs/', '/eks/'];
+    try {
+        var cgroup = fs.readFileSync('/proc/self/cgroup', 'utf8');
+		return DOCKER_GROUPS.some(s => cgroup.includes(s));
+	} catch {
 		return false;
 	}
 }
+
 
 function check() {
 	return hasDockerEnv() || hasDockerCGroup();
